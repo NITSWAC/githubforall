@@ -43,6 +43,7 @@ def _loginuser(request):
 					request.session.set_expiry(0)
 				messages.info(request,'Welcome '+user.username)
 				request.session['username']=email
+				request.session['loggedin']=1
 				return HttpResponseRedirect('/')
 			else:
 				messages.info(request,'Your account is inactive. Contact webmaster')
@@ -84,9 +85,15 @@ def register(request):
 
 
 def dashboard(request):
-	return render(request,'site/dashboard.html')
+	try:
+		if request.session['loggedin'] == 1:
+			return render(request,'site/dashboard.html')
+	except KeyError:
+		return HttpResponseRedirect('/login')
 
 def _logout(request):
 	print request.user.username
+	del request.session['loggedin']
+	del request.session['username']
 	logout(request)
 	return HttpResponseRedirect('/login')
