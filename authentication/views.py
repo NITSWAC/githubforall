@@ -3,14 +3,13 @@ from authentication.forms import UserForm,UserProfileForm
 from datetime import datetime
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate,login,logout
-
+from django.contrib.sessions.models import Session
 from django.contrib import messages
 # Create your views here.
 def index(request):
-	title="homepage"
-	print request.session['user']
-	if request.session['user'].is_authenticated:
-		return HttpResponseRedirect('/dashboard')
+	if request.user.is_authenticated:
+		print "is authenticated"
+		return HttpResponseRedirect('/dashboard/')
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -43,8 +42,8 @@ def _loginuser(request):
 				if not request.POST.get('remember_me', None):
 					request.session.set_expiry(0)
 				messages.info(request,'Welcome '+user.username)
-				return HttpResponseRedirect('/dashboard/')
-				request.session['user']=user
+				request.session['username']=email
+				return HttpResponseRedirect('/')
 			else:
 				messages.info(request,'Your account is inactive. Contact webmaster')
 				return HttpResponseRedirect('/login')
@@ -88,5 +87,6 @@ def dashboard(request):
 	return render(request,'site/dashboard.html')
 
 def _logout(request):
+	print request.user.username
 	logout(request)
-	return HttpResponseRedirect('/')
+	return HttpResponseRedirect('/login')
