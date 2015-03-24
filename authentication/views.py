@@ -7,7 +7,7 @@ from django.contrib.sessions.models import Session
 from django.contrib import messages
 # Create your views here.
 def index(request):
-	if request.user.is_authenticated:
+	if request.user.is_authenticated():
 		print "is authenticated"
 		return HttpResponseRedirect('/dashboard/')
 	else:
@@ -84,16 +84,26 @@ def register(request):
 		'user_form':user_form,'profile_form':profile_form,'registered':registered})
 
 
+# def dashboard(request):
+# 	try:
+# 		if request.session['loggedin'] == 1:
+# 			return render(request,'site/dashboard.html')
+# 	except KeyError:
+# 		return HttpResponseRedirect('/login')
+
 def dashboard(request):
-	try:
-		if request.session['loggedin'] == 1:
-			return render(request,'site/dashboard.html')
-	except KeyError:
+	# print request.user, request.user.is_active, request.user.is_authenticated()
+	if not request.user.is_authenticated():
 		return HttpResponseRedirect('/login')
+	else:
+		pic_path= str(request.user.userprofile.picture)
+		context={'profile_pic': "/media/"+pic_path}
+		return render(request,'site/dashboard.html',context)
+
 
 def _logout(request):
 	print request.user.username
-	del request.session['loggedin']
-	del request.session['username']
+	# del request.session['loggedin']
+	# del request.session['username']
 	logout(request)
 	return HttpResponseRedirect('/login')
