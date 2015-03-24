@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     url(r'^login/', 'authentication.views._login'),
     url(r'^register/', 'authentication.views.register'),
     url(r'^loginuser/', 'authentication.views._loginuser'),
-    url(r'^dashboard/', 'authentication.views.dashboard'),
+    url(r'^dashboard/', 'dashboard.views.dashboard'),
     url(r'^logout/', 'authentication.views._logout'),
 )
 

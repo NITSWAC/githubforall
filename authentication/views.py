@@ -91,14 +91,14 @@ def register(request):
 # 	except KeyError:
 # 		return HttpResponseRedirect('/login')
 
-def dashboard(request):
-	# print request.user, request.user.is_active, request.user.is_authenticated()
-	if not request.user.is_authenticated():
-		return HttpResponseRedirect('/login')
-	else:
-		pic_path= str(request.user.userprofile.picture)
-		context={'profile_pic': "/media/"+pic_path}
-		return render(request,'site/dashboard.html',context)
+# def dashboard(request):
+# 	# print request.user, request.user.is_active, request.user.is_authenticated()
+# 	if not request.user.is_authenticated():
+# 		return HttpResponseRedirect('/login')
+# 	else:
+# 		pic_path= str(request.user.userprofile.picture)
+# 		context={'profile_pic': "/media/"+pic_path}
+# 		return render(request,'site/dashboard.html',context)
 
 
 def _logout(request):
