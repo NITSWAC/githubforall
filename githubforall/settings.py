@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'authentication',
     'widget_tweaks',
+    'dashboard',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^loginuser/', 'authentication.views._loginuser'),
     url(r'^dashboard/', 'dashboard.views.dashboard'),
     url(r'^logout/', 'authentication.views._logout'),
+    url(r'^addproject/','dashboard.views.addproject'),
 )
 
 from django.conf import settings
