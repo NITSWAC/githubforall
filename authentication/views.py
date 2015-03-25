@@ -16,8 +16,11 @@ def index(request):
 
 
 def _login(request):
-	title="Login"
-	return render(request,'site/login.html',{'title':title})
+	if request.user.is_authenticated():
+		return HttpResponseRedirect('/dashboard')
+	else:
+		title="Login"
+		return render(request,'site/login.html',{'title':title})
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')

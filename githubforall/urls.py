@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^dashboard/', 'dashboard.views.dashboard'),
     url(r'^logout/', 'authentication.views._logout'),
     url(r'^addproject/','dashboard.views.addproject'),
+    url(r'^(?P<project_id>\d+)/addtask/$', 'dashboard.views.addtask'),
 )
 
 from django.conf import settings
