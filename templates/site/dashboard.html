@@ -3,6 +3,34 @@
 {%block content %}
 <section class="content">
 <div class="row">
+            <div class="col-lg-4 col-xs-6 col-md-offset-2">
+              <!-- small box -->
+              <div class="small-box bg-aqua">
+                <div class="inner">
+                  <h3>{{projects|length}}</h3>
+                  <p>Total Projects</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-cube"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+              </div>
+            </div>
+            <div class="col-lg-4 col-xs-6">
+              <!-- small box -->
+              <div class="small-box bg-red">
+                <div class="inner">
+                  <h3>{{tasks|length}}</h3>
+                  <p>Total Tasks</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-paper-airplane"></i>
+                </div>
+                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+              </div>
+            </div>
+</div>
+<div class="row">
             <div class="col-xs-6">
               <div class="box">
                 <div class="box-header">
@@ -54,7 +82,11 @@
           <tr>
   				<th>{{t.pk}}</th>
           <th>{{t.name}}</th>
-          <th>0</th>
+          {% if t.progress > 0 %}
+          <th><div class="progress-xs"><div class="progress-bar progress-bar-red" style="width: {{t.progress}}%;"></div></div></th>
+          {% else %}
+          <th>Task not started</th>
+          {% endif %}
           {% for p in t.project.all %}
           <th>{{p.name}}</th>
           {% endfor %}

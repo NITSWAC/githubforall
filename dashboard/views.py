@@ -31,7 +31,8 @@ def addproject(request):
 	else:
 		project_form=ProjectForm()
 		pic_path= str(request.user.userprofile.picture)
-		context={'profile_pic': "/media/"+pic_path, 'username': request.user.first_name,'project_form':project_form}
+		tasks=Task.objects.filter(member=request.user)
+		context={'profile_pic': "/media/"+pic_path, 'username': request.user.first_name,'project_form':project_form,'tasks':tasks}
 	return render(request,'site/addproject.html',context)
 
 
