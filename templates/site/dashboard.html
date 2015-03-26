@@ -43,10 +43,13 @@
 	{% for p in projects %}
 	 <thead>
                       <tr>
-                        <th>{{ p }}</th>
-                        <th><img src="{{ MEDIA_URL}}{{p.project_img}}" class="img-circle" style="width: 10%; height: 10%">
-                        <th>{{ p.createdate}}
+                        <th><a href="/{{p.pk}}/viewproject/">{{ p }}</a></th>
+                        <th><img src="{{ MEDIA_URL}}{{p.project_img}}" class="img-circle" style="width: 10%; height: 10%"></th>
+                        <th>{{ p.createdate}}</th>
+                      
                       </tr>
+                      
+  
      </thead>
      {% endfor %}
     {% else %}

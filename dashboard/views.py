@@ -54,4 +54,18 @@ def addtask(request,project_id):
 		task_form=TaskForm()
 		pic_path= str(request.user.userprofile.picture)
 		context={'project':project,'task_form':task_form,'profile_pic': "/media/"+pic_path, 'username': request.user.first_name}
-		return render(request,'site/addtask.html',context)	
+		return render(request,'site/addtask.html',context)
+
+def viewproject(request,projectid):
+	project=Project.objects.get(pk=projectid)
+	flag=0
+	print project.admin
+	print request.user.username
+	if project.admin== request.user.username:
+		flag=1
+	pic_path= str(request.user.userprofile.picture)
+	tasks=Task.objects.filter(project=project)
+	context={'profile_pic': "/media/"+pic_path,'project':project,'tasks':tasks, 'flag':flag}
+	return render(request,'site/viewproject.html',context)
+
+
