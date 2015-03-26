@@ -55,7 +55,9 @@
   				<th>{{t.pk}}</th>
           <th>{{t.name}}</th>
           <th>0</th>
-          <th>{{t.project.name}}</th>
+          {% for p in t.project.all %}
+          <th>{{p.name}}</th>
+          {% endfor %}
           </tr>
   				{% endfor %}
   				{% else %}
