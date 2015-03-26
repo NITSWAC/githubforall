@@ -48,10 +48,15 @@
   					<th style="width:10px">#</th>
   					<th>Task</th>
   					<th>Progress</th>
-  					<th style="width: 40px">Label</th>
+  					<th style="width: 40px">Project</th>
   				</tr>
   				{% for t in tasks %}
-  				<th>{{t.name}}</th>
+          <tr>
+  				<th>{{t.pk}}</th>
+          <th>{{t.name}}</th>
+          <th>0</th>
+          <th>{{t.project.name}}</th>
+          </tr>
   				{% endfor %}
   				{% else %}
   				<tr>Sorry, no tasks </tr>
