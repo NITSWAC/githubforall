@@ -6,7 +6,7 @@ from authentication.models import UserProfile
 
 class Project(models.Model):
 	admin=models.CharField(max_length=100)
-	name=models.CharField(max_length=100)
+	name=models.CharField(max_length=100,unique=True)
 	max_members=models.IntegerField()
 	desp=models.TextField()
 	branch=models.CharField(max_length=100)

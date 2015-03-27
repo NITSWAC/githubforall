@@ -30,7 +30,7 @@
                 <span class="info-box-icon"><i class="ion ion-ios-heart-outline"></i></span>
                 <div class="info-box-content">
                   <span class="info-box-text">Members Joined</span>
-                  <span class="info-box-number">{{project.max_members}}</span>
+                  <span class="info-box-number">{{members|length}}</span>
                  
                   <span class="progress-description">
                     More members to join
@@ -50,13 +50,18 @@
  			<h3 class="box-title">Team Members</h3>
  		</div>
  		<div class="box-body">
- 			<div class="row">
-
- 			<div class="col-md-12">
- 				Have to add this
- 				
- 			</div>
- 		</div>
+   			<table class="table table-bordered">
+                    <tr>
+                      <th>Name</th>
+                      <th>Date added</th>
+                    </tr>
+                    {% for member in members%}
+                    <tr>
+                    <th>{{member.person.user.first_name}}</th>
+                    <th> {{member.date_joined}}</th>
+                   </tr>
+                   {% endfor %}
+                </table>
  		</div>
  		</div>
  			

@@ -36,16 +36,21 @@ def dashboard(request):
 def addproject(request):
 	if request.method == "POST":
 		project_form=ProjectForm(data=request.POST)
-		project=project_form.save(commit=False)
-		project.admin=request.user.username
-		project.project_img=request.FILES['project_img']
-		project.save()
-		return HttpResponseRedirect('/dashboard')
+		if project_form.is_valid():
+			project=project_form.save(commit=False)
+			project.admin=request.user.username
+			project.project_img=request.FILES['project_img']
+			project.save()
+			return HttpResponseRedirect('/dashboard')
+		else:
+			# print user_form.errors, profile_form.errors
+			# messages.clear()
+			messages.error(request,str(project_form.errors))
 	else:
 		project_form=ProjectForm()
-		pic_path= str(request.user.userprofile.picture)
-		tasks=Task.objects.filter(member=request.user)
-		context={'profile_pic': "/media/"+pic_path, 'username': request.user.first_name,'project_form':project_form,'tasks':tasks}
+	pic_path= str(request.user.userprofile.picture)
+	tasks=Task.objects.filter(member=request.user)
+	context={'profile_pic': "/media/"+pic_path, 'username': request.user.first_name,'project_form':project_form,'tasks':tasks}
 	return render(request,'site/addproject.html',context)
 
 
@@ -86,13 +91,13 @@ def viewproject(request,projectid):
 	except ObjectDoesNotExist as e:
 		print "Not found"
 		flag2=0
-	
+	project_members= Membership.objects.filter(project=project)
 	print project.admin
 	print request.user.username	
 	pic_path= str(project.project_img)
 	pic_path2=str(request.user.userprofile.picture)
 	tasks=Task.objects.filter(project=project)
-	context={'profile_pic': "/media/"+pic_path2,'profile_pic2': "/media/"+pic_path,'project':project,'tasks':tasks, 'flag':flag,'flag2':flag2}
+	context={'members':project_members, 'profile_pic': "/media/"+pic_path2,'profile_pic2': "/media/"+pic_path,'project':project,'tasks':tasks, 'flag':flag,'flag2':flag2}
 	return render(request,'site/viewproject.html',context)
 
 
