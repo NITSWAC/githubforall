@@ -20,10 +20,12 @@ def dashboard(request):
 		if len(project2)>0:
 			for projects in project2:
 				unconf_members=projects.members.all()
+				print unconf_members
 				for member in unconf_members:
-					m=Membership.objects.get(person=member)
+					print member
+					m=Membership.objects.get(person=member,project=projects)
 					if not m.confirmed:
-						l.append({'mempk':member.pk,'memname':member.user.first_name, 'memconf':m.confirmed, 'project':projects.name})
+						l.append({'mempk':member.pk,'memname':member.user.first_name, 'memconf':m.confirmed, 'project':projects})
 				print projects.members.all()
 		pic_path= str(request.user.userprofile.picture)
 		tasks=Task.objects.filter(member=request.user)
@@ -86,13 +88,11 @@ def viewproject(request,projectid):
 		flag2=0
 	
 	print project.admin
-	print request.user.username
-		
-	
-		
+	print request.user.username	
 	pic_path= str(project.project_img)
+	pic_path2=str(request.user.userprofile.picture)
 	tasks=Task.objects.filter(project=project)
-	context={'profile_pic': "/media/"+pic_path,'project':project,'tasks':tasks, 'flag':flag,'flag2':flag2}
+	context={'profile_pic': "/media/"+pic_path2,'profile_pic2': "/media/"+pic_path,'project':project,'tasks':tasks, 'flag':flag,'flag2':flag2}
 	return render(request,'site/viewproject.html',context)
 
 
@@ -125,4 +125,25 @@ def profile(request,user_id):
 	context={'u':user1, 'project': adminproject, 'conproject':mem2, 'profile_pic2':profile_pic, 'profile_pic': "/media/"+pic_path, 'username': request.user.first_name}
 	return render(request,"site/profile.html",context)
 
+def accept(request,user_id,project_id):
+	if request.user.username == Project.objects.get(pk=project_id).admin:
+		print "Admin"
+		project2= Project.objects.get(pk=project_id)
+		user=UserProfile.objects.get(pk=user_id)
+		mem=Membership.objects.get(person=user,project=project2)
+		mem.confirmed=True
+		mem.save()
+		return HttpResponseRedirect('/dashboard')
+	else:
+		return HttpResponseRedirect('/logout')
 
+def reject(request,user_id,project_id):
+	if request.user.username == Project.objects.get(pk=project_id).admin:
+		print "Admin"
+		project2= Project.objects.get(pk=project_id)
+		user=UserProfile.objects.get(pk=user_id)
+		mem=Membership.objects.get(person=user,project=project2)
+		mem.delete()
+		return HttpResponseRedirect('/dashboard')
+	else:
+		return HttpResponseRedirect('/logout')

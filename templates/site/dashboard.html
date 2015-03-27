@@ -120,14 +120,16 @@
           {%if unconmem %}
           <tr>
             <th>Member</th>
-            <th>Status</th>
             <th>Project</th>
+            <th>Accept</th>
+            <th>Reject</th>
           </tr>
           {% for m in unconmem %}
           <tr>
           <th><a href="/{{ m.mempk}}/profile">{{m.memname}}</th>
-          <th>{{m.memconf}}</th>
-          <th>{{m.project}}</th>
+          <th>{{m.project.name}}</th>
+          <th><a href="/{{m.mempk}}-{{m.project.pk}}/accept" class="btn btn-flat btn-success"><i class="fa fa-check"></i></a></th>
+          <th><a href="/{{m.mempk}}-{{m.project.pk}}/reject" class="btn btn-flat btn-danger"><i class="fa fa-times"></i></a></th>
           {% endfor %}
           {% else %}
           <tr>No Members bro </tr>

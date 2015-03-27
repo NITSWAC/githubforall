@@ -19,6 +19,8 @@ urlpatterns = patterns('',
     url(r'^(?P<project_id>\d+)/applytoproject/$', 'dashboard.views.applytoproject'),
     url(r'^search/$', 'dashboard.views.search'),
     url(r'^(?P<user_id>\d+)/profile/$', 'dashboard.views.profile'),
+    url(r'^(?P<user_id>\d+)-(?P<project_id>\d+)/accept/$', 'dashboard.views.accept'),
+    url(r'^(?P<user_id>\d+)-(?P<project_id>\d+)/reject/$', 'dashboard.views.reject'),
 
 
 )
