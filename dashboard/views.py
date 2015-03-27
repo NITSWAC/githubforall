@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from dashboard.forms import ProjectForm,TaskForm
 from datetime import datetime
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.sessions.models import Session
 from django.contrib import messages
@@ -10,6 +10,13 @@ from authentication.models import UserProfile
 from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
+
+def load_defaults(request, context):
+	pic_path= str(request.user.userprofile.picture)
+	tasks=Task.objects.filter(member=request.user)
+	userp=UserProfile.objects.get(user=request.user)
+	context.update({'profile_pic': "/media/"+pic_path,'tasks':tasks,'userp':userp})
+
 def dashboard(request):
 	# print request.user, request.user.is_active, request.user.is_authenticated()
 	if not request.user.is_authenticated():
@@ -27,9 +34,10 @@ def dashboard(request):
 					if not m.confirmed:
 						l.append({'mempk':member.pk,'memname':member.user.first_name, 'memconf':m.confirmed, 'project':projects})
 				print projects.members.all()
-		pic_path= str(request.user.userprofile.picture)
-		tasks=Task.objects.filter(member=request.user)
-		context={'unconmem':l,'profile_pic': "/media/"+pic_path, 'username': request.user.first_name,'projects':project2,'tasks':tasks}
+		# pic_path= str(request.user.userprofile.picture)
+		# tasks=Task.objects.filter(member=request.user)
+		context={'unconmem':l,'projects':project2,}
+		load_defaults(request,context)
 		return render(request,'site/dashboard.html',context)
 
 
@@ -48,9 +56,10 @@ def addproject(request):
 			messages.error(request,str(project_form.errors))
 	else:
 		project_form=ProjectForm()
-	pic_path= str(request.user.userprofile.picture)
-	tasks=Task.objects.filter(member=request.user)
-	context={'profile_pic': "/media/"+pic_path, 'username': request.user.first_name,'project_form':project_form,'tasks':tasks}
+	# pic_path= str(request.user.userprofile.picture)
+	# tasks=Task.objects.filter(member=request.user)
+	context={'project_form':project_form,}
+	load_defaults(request,context)
 	return render(request,'site/addproject.html',context)
 
 
@@ -70,8 +79,8 @@ def addtask(request,project_id):
 	else:
 		print request.user
 		task_form=TaskForm()
-		pic_path= str(request.user.userprofile.picture)
-		context={'project':project,'task_form':task_form,'profile_pic': "/media/"+pic_path, 'username': request.user.first_name}
+		# pic_path= str(request.user.userprofile.picture)
+		context={'project':project,'task_form':task_form,}
 		return render(request,'site/addtask.html',context)
 
 def viewproject(request,projectid):
@@ -97,7 +106,7 @@ def viewproject(request,projectid):
 	pic_path= str(project.project_img)
 	pic_path2=str(request.user.userprofile.picture)
 	tasks=Task.objects.filter(project=project)
-	context={'members':project_members, 'profile_pic': "/media/"+pic_path2,'profile_pic2': "/media/"+pic_path,'project':project,'tasks':tasks, 'flag':flag,'flag2':flag2}
+	context={'userp':member,'members':project_members, 'profile_pic': "/media/"+pic_path2,'profile_pic2': "/media/"+pic_path,'project':project,'tasks':tasks, 'flag':flag,'flag2':flag2}
 	return render(request,'site/viewproject.html',context)
 
 
@@ -127,7 +136,8 @@ def profile(request,user_id):
 			mem2.append(m)
 	profile_pic="/media/"+str(user1.picture)
 	pic_path= str(request.user.userprofile.picture)
-	context={'u':user1, 'project': adminproject, 'conproject':mem2, 'profile_pic2':profile_pic, 'profile_pic': "/media/"+pic_path, 'username': request.user.first_name}
+	context={'u':user1, 'project': adminproject, 'conproject':mem2, 'profile_pic2':profile_pic,}
+	load_defaults(request,context)
 	return render(request,"site/profile.html",context)
 
 def accept(request,user_id,project_id):
@@ -152,3 +162,30 @@ def reject(request,user_id,project_id):
 		return HttpResponseRedirect('/dashboard')
 	else:
 		return HttpResponseRedirect('/logout')
+
+def tasks(request,user_id,project_id):
+	userp=UserProfile.objects.get(pk=user_id)
+	if request.user.username != userp.user.username:
+		return HttpResponse("cant access- users dont match")
+	project=Project.objects.get(pk=project_id)
+	projects_administered= Project.objects.filter(admin=userp.user.username, pk=project_id)
+	allowed_projects=Membership.objects.filter(person=userp, project=project)
+	flag=False
+	for p in allowed_projects:
+		if p==p.project:
+			flag=True
+	if flag==True and project not in projects_administered:
+		return HttpResponse("cant access- project cant be viewed")
+	# projects_administered= Project.objects.filter(admin=userp.user.username, pk=project_id)
+	# for p in projects_administered:
+	# 	t=Task.objects.filter(project=p,member=userp)
+	# 	t_list=[]
+	# 	for task in t:
+	# 		t_list.append(task)
+	# 	project_tasks.update({p:t_list})
+	# print project_tasks
+	
+	project_tasks=Task.objects.filter(project=project, member=userp)
+	context={'project_tasks':project_tasks,'project':project}
+	load_defaults(request,context)
+	return render(request, 'site/tasks.html',context)
