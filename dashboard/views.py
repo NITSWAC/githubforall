@@ -16,17 +16,18 @@ def dashboard(request):
 		return HttpResponseRedirect('/login')
 	else:
 		l=[]
-		projects=Project.objects.filter(admin=request.user.username)
-		if len(projects)>0:
-			unconf_members=projects[0].members.all()
-			for member in unconf_members:
-				m=Membership.objects.get(person=member)
-				if not m.confirmed:
-					l.append([member.pk,member.user.first_name, m.confirmed])
-			print projects[0].members.all()
+		project2=Project.objects.filter(admin=request.user.username)
+		if len(project2)>0:
+			for projects in project2:
+				unconf_members=projects.members.all()
+				for member in unconf_members:
+					m=Membership.objects.get(person=member)
+					if not m.confirmed:
+						l.append({'mempk':member.pk,'memname':member.user.first_name, 'memconf':m.confirmed, 'project':projects.name})
+				print projects.members.all()
 		pic_path= str(request.user.userprofile.picture)
 		tasks=Task.objects.filter(member=request.user)
-		context={'unconmem':l,'profile_pic': "/media/"+pic_path, 'username': request.user.first_name,'projects':projects,'tasks':tasks}
+		context={'unconmem':l,'profile_pic': "/media/"+pic_path, 'username': request.user.first_name,'projects':project2,'tasks':tasks}
 		return render(request,'site/dashboard.html',context)
 
 
@@ -101,3 +102,27 @@ def applytoproject(request,project_id):
 	membership=Membership.objects.create(person=user, project=project)
 	membership.save()
 	return HttpResponseRedirect("/"+str(project_id)+"/viewproject")
+
+
+def search(request):
+	searchterm=request.GET['q'];
+	projects=Project.objects.filter(name__startswith=searchterm)
+	users=UserProfile.objects.filter(user__first_name__startswith=searchterm)
+	pic_path= str(request.user.userprofile.picture)
+	context={'projects': projects,'profile_pic': "/media/"+pic_path, 'username': request.user.first_name,'userlist':users}	
+	return render(request,"site/search.html",context)
+
+def profile(request,user_id):
+	user1=UserProfile.objects.get(pk=user_id)
+	adminproject=Project.objects.filter(admin=user1.user.username)
+	mem=Membership.objects.filter(person=user1)
+	mem2=[]
+	for m in mem:
+		if m.confirmed == True:
+			mem2.append(m)
+	profile_pic="/media/"+str(user1.picture)
+	pic_path= str(request.user.userprofile.picture)
+	context={'u':user1, 'project': adminproject, 'conproject':mem2, 'profile_pic2':profile_pic, 'profile_pic': "/media/"+pic_path, 'username': request.user.first_name}
+	return render(request,"site/profile.html",context)
+
+

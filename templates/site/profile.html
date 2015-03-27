@@ -1,0 +1,77 @@
+{% extends "layout/header.html" %}
+
+{%block content %}
+
+<section class="content">
+ <div class="row">
+ <div class="col-md-3"><a href="#" class="thumbnail"><img class="" src={{profile_pic2}} class="img-responsive" style="width: 40%; height: 100px; "></a></div>
+ <div class="col-md-9">
+    <h1>{{u.user.first_name}}</h1>
+    <h3>{{u.user.username}}</h3>
+
+ </div>
+ </div>
+
+ <div class="row">
+            <div class="col-md-6">
+              <div class="box">
+                <div class="box-header">
+                  <h3 class="box-title">Projects </h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                {% if project|length > 0 %}
+                
+                  <table class="table table-bordered">
+                    <tr>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Maximum Members</th>
+                    </tr>
+                    {% for p in project %}
+                    <tr>
+                    <th><a href="/{{p.pk}}/viewproject">{{p.name}}</a></th>
+                    <th>{{p.desp}}</th>
+                    <th>{{p.max_members}}</th>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {%else%}
+            <p>No projects started</p>
+            {% endif %}    
+        
+         </div>
+         </div>
+         </div>
+         <div class="col-md-6">
+              <div class="box">
+                <div class="box-header">
+                  <h3 class="box-title">Projects Contributed to </h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                {% if conproject|length > 0 %}
+                
+                  <table class="table table-bordered">
+                    <tr>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Maximum Members</th>
+                    </tr>
+                    {% for m in conproject %}
+                    <tr>
+                    <th><a href="/{{m.project.pk}}/viewproject">{{m.project.name}}</a></th>
+                    <th>{{m.project.desp}}</th>
+                    <th>{{m.project.max_members}}</th>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {%else%}
+            <p>No projects contributed</p>
+            {% endif %}    
+        
+         </div>
+         </div>
+         </div>
+  </div>
+
+ </section>
+ {% endblock %}

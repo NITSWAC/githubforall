@@ -31,6 +31,12 @@
             </div>
 </div>
 <div class="row">
+  <div class="col-md-12"><a href="/addproject" class="btn btn-warning btn-block">Add a Project</a></div>
+  <br>
+  <br>
+  <br>
+</div>
+<div class="row">
             <div class="col-xs-6">
               <div class="box">
                 <div class="box-header">
@@ -49,7 +55,6 @@
                       
                       </tr>
                       
-  
      </thead>
      {% endfor %}
     {% else %}
@@ -114,15 +119,15 @@
 
           {%if unconmem %}
           <tr>
-            <th style="width:10px">#</th>
             <th>Member</th>
             <th>Status</th>
+            <th>Project</th>
           </tr>
           {% for m in unconmem %}
           <tr>
-          {% for i in m %}
-          <th>{{i}}</th>
-           {% endfor %}
+          <th><a href="/{{ m.mempk}}/profile">{{m.memname}}</th>
+          <th>{{m.memconf}}</th>
+          <th>{{m.project}}</th>
           {% endfor %}
           {% else %}
           <tr>No Members bro </tr>

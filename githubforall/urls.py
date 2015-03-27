@@ -17,6 +17,10 @@ urlpatterns = patterns('',
     url(r'^(?P<project_id>\d+)/addtask/$', 'dashboard.views.addtask'),
     url(r'^(?P<projectid>\d+)/viewproject/$', 'dashboard.views.viewproject'),
     url(r'^(?P<project_id>\d+)/applytoproject/$', 'dashboard.views.applytoproject'),
+    url(r'^search/$', 'dashboard.views.search'),
+    url(r'^(?P<user_id>\d+)/profile/$', 'dashboard.views.profile'),
+
+
 )
 
 from django.conf import settings
