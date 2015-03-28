@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.sessions.models import Session
 from django.contrib import messages
-from dashboard.models import Project,Task,Membership
+from dashboard.models import Project,Task,Membership,Commit
 from authentication.models import UserProfile
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -69,9 +69,16 @@ def addtask(request,project_id):
 	if request.method == "POST":
 		task_form=TaskForm(data=request.POST)
 		member_to_add=request.POST['member']
-
+		commit=Commit()
+		commit.project=project_id
+		commit.user=request.user.username
+		commit.commit_prog=0
+		commit.commit_msg="Added new Task"
+		commit.save()
 		print 'printing member', member_to_add
 		task=task_form.save(commit=False)
+		task.progress=0
+		task.last_commit=commit
 		task.save()
 		task.member.add(member_to_add)
 		task.project.add(project)
@@ -89,14 +96,17 @@ def viewproject(request,projectid):
 
 	flag2=0
 	flag=0
+	role=""
 	if project.admin== request.user.username:
 			flag=1
+			role="admin"
 	try:
 		mem=Membership.objects.get(person=member,project=project)
 		if mem.confirmed == False:
 			flag2=1
 		else:
 			flag=1
+			role="member"
 	except ObjectDoesNotExist as e:
 		print "Not found"
 		flag2=0
@@ -106,7 +116,7 @@ def viewproject(request,projectid):
 	pic_path= str(project.project_img)
 	pic_path2=str(request.user.userprofile.picture)
 	tasks=Task.objects.filter(project=project)
-	context={'userp':member,'members':project_members, 'profile_pic': "/media/"+pic_path2,'profile_pic2': "/media/"+pic_path,'project':project,'tasks':tasks, 'flag':flag,'flag2':flag2}
+	context={'userp':member,'members':project_members, 'profile_pic': "/media/"+pic_path2,'profile_pic2': "/media/"+pic_path,'project':project,'tasks':tasks, 'flag':flag,'flag2':flag2,'role':role}
 	return render(request,'site/viewproject.html',context)
 
 
@@ -189,3 +199,29 @@ def tasks(request,user_id,project_id):
 	context={'project_tasks':project_tasks,'project':project}
 	load_defaults(request,context)
 	return render(request, 'site/tasks.html',context)
+
+
+def updatetask(request, task_id,project_id):
+	task=Task.objects.get(pk=task_id)
+	members=task.member.all()
+	flag=0 
+	person=UserProfile.objects.get(user=request.user)
+	print person.pk
+	for m in members:
+		if m==person:
+			flag=1
+			break;
+	if flag == 1:
+		print "Authenticated member"
+		task.progress=request.POST['progress']
+		commit=Commit()
+		commit.project=project_id
+		commit.user=request.user.username
+		commit.commit_prog=request.POST['progress']
+		commit.commit_msg=request.POST['commit_msg']
+		commit.save()
+		task.last_commit=commit
+		task.save()
+
+
+	return HttpResponseRedirect('/'+str(person.pk)+'-'+project_id+'/tasks')

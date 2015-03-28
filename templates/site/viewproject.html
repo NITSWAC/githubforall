@@ -12,6 +12,10 @@
 {% elif flag2 == 1 %}
 <div class="col-md-3"><a href="#" class="btn btn-warning btn-block">Awaiting Confirmation</a></div>
 {% endif %}
+
+{% if role == 'admin' %}
+<div class="col-md-3"><a href="/{{project.pk}}/addtask/" class="btn btn-warning btn-block">Add a Task</a></div>
+{% endif%}
  </div>
  <div class="row">
  <div class="col-md-12">
@@ -52,11 +56,13 @@
  		<div class="box-body">
    			<table class="table table-bordered">
                     <tr>
+                      <th>     </th>
                       <th>Name</th>
                       <th>Date added</th>
                     </tr>
                     {% for member in members%}
                     <tr>
+                    <th><div class="pull-left image"><img class="img-circle" src="/media/{{member.person.picture}}" alt="" style="width: 45px; height: 45px "></div></th> 
                     <th>{{member.person.user.first_name}}</th>
                     <th> {{member.date_joined}}</th>
                    </tr>
@@ -85,9 +91,11 @@
                     {% for t in tasks %}
                     <tr>
                     <th>{{t.name}}</th>
+                    <th>
                     {% for m in t.member.all %}
-                    <th> {{ m.user.username }}</th>
+                    {{ m.user.username }}
                     {% endfor %}
+                    </th>
                      <th>
                         <div class="progress progress-xs">
                           <div class="progress-bar progress-bar-danger" style="width: {{t.progress}}%"></div>
