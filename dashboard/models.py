@@ -23,7 +23,14 @@ class Membership(models.Model):
 	confirmed = models.BooleanField(default=False)
 
 
-
+class Commit(models.Model):
+	project=models.IntegerField()
+	user=models.CharField(max_length=100)
+	commit_prog=models.IntegerField()
+	commit_msg=models.TextField()
+	commit_date=models.DateField(auto_now=True)
+	def __str__(self):
+		return self.commit_msg
 
 class Task(models.Model):
 	project=models.ManyToManyField(Project)
@@ -31,5 +38,6 @@ class Task(models.Model):
 	member= models.ManyToManyField(UserProfile)
 	desc=models.TextField()    
 	progress= models.IntegerField()
+	last_commit=models.ForeignKey(Commit)
 	def __str__(self):
 		return self.name

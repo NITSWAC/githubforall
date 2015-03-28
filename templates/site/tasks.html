@@ -16,10 +16,29 @@
           </div><!-- /.box-tools -->
         </div><!-- /.box-header -->
         <div class="box-body" style="display: none;">
-          {# body of the expandable task #}
-         
+         <h3>Update the task {{task.name}}</h3>
+          <form action="/{{task.pk}}/updatetask" method="POST" name="task_form">
+          {%csrf_token%}
+          
+          <div class="row">
+          <div class="col-md-10">
+          <input type="range" class="form-control" name="progress" value="{{task.progress}}" placeholder="" min=0 max=100>
+          </div>
+          <div class="col-md-2">
+            <h4>Value</h4>
+          </div>
+          </div>
+        
 
-
+          <div class="form-group has-feedback">
+          <textarea class="form-control" name="commit_msg" placeholder="Enter your commit message"></textarea>
+          </div>
+          <div class="form-group has-feedback">
+          <input type="submit" name="submit" value="Update task" class="btn btn-primary btn-block btn-flat">
+          </div>
+          </form>
+          
+          
           {# end of body #}
         </div><!-- /.box-body -->
       </div><!-- /.box -->

@@ -16,3 +16,4 @@ class TaskForm(forms.ModelForm):
         model = Task
         exclude=('project',)
         fields=('name','desc','member')
+
