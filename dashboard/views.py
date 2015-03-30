@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from dashboard.forms import ProjectForm,TaskForm
+from dashboard.forms import ProjectForm,TaskForm,ThreadForm,PostForm
 from datetime import datetime
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.sessions.models import Session
 from django.contrib import messages
-from dashboard.models import Project,Task,Membership,Commit
+from dashboard.models import Project,Task,Membership,Commit,Thread,Post
 from authentication.models import UserProfile
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -36,7 +36,9 @@ def dashboard(request):
 				print projects.members.all()
 		# pic_path= str(request.user.userprofile.picture)
 		# tasks=Task.objects.filter(member=request.user)
-		context={'unconmem':l,'projects':project2,}
+		userp=UserProfile.objects.get(user=request.user)
+		threads_started=Thread.objects.filter(started_by=userp)
+		context={'unconmem':l,'projects':project2,'threads_started':threads_started}
 		load_defaults(request,context)
 		return render(request,'site/dashboard.html',context)
 
@@ -225,3 +227,45 @@ def updatetask(request, task_id,project_id):
 
 
 	return HttpResponseRedirect('/'+str(person.pk)+'-'+project_id+'/tasks')
+
+def newthread(request):
+	userp= UserProfile.objects.get(user=request.user)
+	if request.method =='POST':
+		thread_form=ThreadForm(data=request.POST)
+		if thread_form.is_valid():
+			thread=thread_form.save(commit=False)
+			thread.started_by=userp
+			thread.save()
+			return HttpResponseRedirect('/dashboard')
+		else:
+			# print user_form.errors, profile_form.errors
+			# messages.clear()
+			messages.error(request,str(thread_form.errors))
+	else:
+		thread_form=ThreadForm()
+	context={'thread_form':thread_form}
+	load_defaults(request,context)
+	return render(request, 'site/newthread.html',context)	
+
+def thread(request,thread_id):
+	userp= UserProfile.objects.get(user=request.user)
+	thread=Thread.objects.get(pk=thread_id)
+	posts=Post.objects.filter(thread=thread)
+	
+	if request.method =='POST':
+		post_form=PostForm(data=request.POST)
+		if post_form.is_valid():
+			post=post_form.save(commit=False)
+			post.posted_by=userp
+			post.thread=thread
+			post.save()
+			# return HttpResponseRedirect('/th/'+str(thread_id))
+		else:
+			messages.error(request,str(post_form.errors))
+	post_form=PostForm()
+	context={'thread':thread, 'posts':posts,'post_form':post_form}
+	load_defaults(request,context)
+	return render(request, 'site/thread.html', context)
+
+
+

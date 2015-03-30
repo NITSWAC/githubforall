@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'authentication',
     'widget_tweaks',
     'dashboard',
+    'ckeditor'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -91,3 +92,4 @@ MEDIA_URL = "/media/"
 
 STATICFILES_DIRS = ('./static',)
 TEMPLATE_DIRS = ('./templates',)
+CKEDITOR_UPLOAD_PATH = "/media/uploads/"

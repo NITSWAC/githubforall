@@ -23,6 +23,9 @@ urlpatterns = patterns('',
     url(r'^(?P<user_id>\d+)-(?P<project_id>\d+)/reject/$', 'dashboard.views.reject'),
     url(r'^(?P<user_id>\d+)-(?P<project_id>\d+)/tasks/$', 'dashboard.views.tasks'),
     url(r'^(?P<task_id>\d+)-(?P<project_id>\d+)/updatetask/$', 'dashboard.views.updatetask'),
+    url(r'^newthread/','dashboard.views.newthread'),
+    (r'^ckeditor/', include('ckeditor.urls')),
+    url(r'^th/(?P<thread_id>\d+)/$', 'dashboard.views.thread'),
 
 
 )

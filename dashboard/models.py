@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from authentication.models import UserProfile
+from ckeditor.fields import RichTextField
 # Create your models here.
 
 
@@ -41,3 +42,26 @@ class Task(models.Model):
 	last_commit=models.ForeignKey(Commit)
 	def __str__(self):
 		return self.name
+
+# tag feature and a category model
+class Thread(models.Model):
+	started_by = models.ForeignKey(UserProfile,related_name='%(class)s_requests_created')
+	heading = models.CharField(max_length=100)
+	msg= models.TextField()
+	posted_at =models.DateTimeField(auto_now=True)
+	members_posted = models.ManyToManyField(UserProfile, through='Post')
+	def __str__(self):
+		return self.heading
+
+class Post(models.Model):
+	thread = models.ForeignKey(Thread)
+	posted_by = models.ForeignKey(UserProfile)
+	posted_at =models.DateTimeField(auto_now=True)
+	msg=models.TextField()
+	def __str__(self):
+		return self.posted_by.user.first_name
+
+
+
+
+
