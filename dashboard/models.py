@@ -53,6 +53,9 @@ class Thread(models.Model):
 	def __str__(self):
 		return self.heading
 
+
+
+
 class Post(models.Model):
 	thread = models.ForeignKey(Thread)
 	posted_by = models.ForeignKey(UserProfile)
