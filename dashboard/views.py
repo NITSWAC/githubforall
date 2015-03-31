@@ -268,4 +268,17 @@ def thread(request,thread_id):
 	return render(request, 'site/thread.html', context)
 
 
+def upvote(request,post_id,thread_id):
+	post=Post.objects.get(pk=post_id)
+	if request.user.is_authenticated():
+		post.upvotes=post.upvotes+1
+		post.save()
+	return HttpResponseRedirect('/th/'+str(thread_id))
+
+def downvote(request,post_id,thread_id):
+	post=Post.objects.get(pk=post_id)
+	if request.user.is_authenticated():
+		post.downvotes=post.downvotes+1
+		post.save()
+	return HttpResponseRedirect('/th/'+str(thread_id))
 

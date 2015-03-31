@@ -61,6 +61,8 @@ class Post(models.Model):
 	posted_by = models.ForeignKey(UserProfile)
 	posted_at =models.DateTimeField(auto_now=True)
 	msg=models.TextField()
+	upvotes=models.IntegerField(default=0)
+	downvotes=models.IntegerField(default=0)
 	def __str__(self):
 		return self.posted_by.user.first_name
 
