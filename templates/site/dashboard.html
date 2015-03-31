@@ -154,13 +154,13 @@
           <tr>
             <th>Heading</th>
             <th>Started At</th>
-            <th>Members posted</th>
+            <th>Posts</th>
           </tr>
-          {% for thread in threads_started %}
+          {% for thread,n in myposts.items %}
           <tr>
           <th><a href="/th/{{ thread.pk }}">{{thread.heading}}</th>
           <th>{{thread.posted_at}}</th>
-          <th>{{ thread.members.all|length }}</th>
+          <th>{{n}}</th>
           
           {% endfor %}
           {% else %}

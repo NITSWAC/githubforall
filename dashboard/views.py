@@ -38,7 +38,13 @@ def dashboard(request):
 		# tasks=Task.objects.filter(member=request.user)
 		userp=UserProfile.objects.get(user=request.user)
 		threads_started=Thread.objects.filter(started_by=userp)
-		context={'unconmem':l,'projects':project2,'threads_started':threads_started}
+		m={}
+		for t in threads_started:
+			k=len(Post.objects.filter(thread=t))
+			m[t]=k
+
+
+		context={'unconmem':l,'projects':project2,'threads_started':threads_started,'myposts': m}
 		load_defaults(request,context)
 		return render(request,'site/dashboard.html',context)
 
@@ -282,3 +288,11 @@ def downvote(request,post_id,thread_id):
 		post.save()
 	return HttpResponseRedirect('/th/'+str(thread_id))
 
+def alltasks(request,user_id):
+	userp=UserProfile.objects.get(pk=user_id)
+	if request.user.username != userp.user.username:
+		return HttpResponse("cant access- users dont match")
+	project_tasks=Task.objects.filter(member=userp)
+	context={'project_tasks':project_tasks,'project':project}
+	load_defaults(request,context)
+	return render(request, 'site/alltasks.html',context)

@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     url(r'^th/(?P<thread_id>\d+)/$', 'dashboard.views.thread'),
     url(r'^th/(?P<thread_id>\d+)-(?P<post_id>\d+)/upvote/$', 'dashboard.views.upvote'),
     url(r'^th/(?P<thread_id>\d+)-(?P<post_id>\d+)/downvote/$', 'dashboard.views.downvote'),
+    url(r'^(?P<user_id>\d+)/alltasks/$', 'dashboard.views.alltasks'),
 
 
 
