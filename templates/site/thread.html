@@ -34,11 +34,11 @@
                                     {{ post.msg }}
                                 </div>
                                 <div class="action">
-                                    <button type="button" class="btn btn-success btn-xs" title="Approved" onclick="location.reload();location.href='/th/{{thread.pk}}-{{post.pk}}/upvote'">
-                                        <span class="glyphicon glyphicon-arrow-up">{%if post.upvotes > 0 %} {{post.upvotes}}{% endif %}</span>
+                                    <button type="button" class="btn btn-success btn-xs" title="Approved" id="upvote" onclick="upvotethis({{post.pk}},{{thread.pk}})" >
+                                        <span class="glyphicon glyphicon-arrow-up" id="upvotecount{{post.pk}}">{%if post.upvotes > 0 %} {{post.upvotes}}{% endif %}</span>
                                     </button>
-                                    <button type="button" class="btn btn-danger btn-xs" title="Delete" onclick="location.reload();location.href='/th/{{thread.pk}}-{{post.pk}}/downvote'">
-                                        <span class="glyphicon glyphicon-arrow-down">{%if post.downvotes > 0 %} {{post.downvotes}} {% endif %}</span>
+                                    <button type="button" class="btn btn-danger btn-xs" title="Delete" onclick="downvotethis({{post.pk}},{{thread.pk}})">
+                                        <span class="glyphicon glyphicon-arrow-down" id="downvotecount{{post.pk}}">{%if post.downvotes > 0 %} {{post.downvotes}} {% endif %}</span>
                                     </button>
                                 </div>
                             </div>
@@ -75,6 +75,8 @@
 </div>
 
 
+ 
 
  </section>
  {% endblock %}
+

@@ -296,3 +296,27 @@ def alltasks(request,user_id):
 	context={'project_tasks':project_tasks,'project':project}
 	load_defaults(request,context)
 	return render(request, 'site/alltasks.html',context)
+
+def upvote2(request):
+	upvotes=0
+	if request.method == 'GET':
+		post_id=request.GET['post_id']
+		thread_id=request.GET['thread_id']
+		post=Post.objects.get(pk=post_id)
+		if request.user.is_authenticated():
+			post.upvotes=post.upvotes+1
+			upvotes=post.upvotes
+			post.save()
+	return HttpResponse(upvotes)
+
+def downvote2(request):
+	downvotes=0
+	if request.method == 'GET':
+		post_id=request.GET['post_id']
+		thread_id=request.GET['thread_id']
+		post=Post.objects.get(pk=post_id)
+		if request.user.is_authenticated():
+			post.downvotes=post.downvotes+1
+			downvotes=post.downvotes
+			post.save()
+	return HttpResponse(downvotes)
