@@ -294,6 +294,7 @@ def create_post(request,thread_id):
         response_data['created'] = post.posted_at.strftime('%B %d, %Y %I:%M %p')
         response_data['author'] = post.posted_by.user.first_name
         response_data['pic_path']= "/media/"+str(post.posted_by.user.userprofile.picture)
+        response_data['thread_id']=thread_id
 
         return HttpResponse(
             json.dumps(response_data),

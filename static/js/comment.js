@@ -30,9 +30,9 @@ $(function() {
                     "<img src="+ json.pic_path+" class='img-circle img-responsive' style='width: 50%; height:50%;' alt='' /></div>" +
                     "<div class='col-xs-6 col-md-6'><div><div class='mic-info'>" + "<div class='mic-info'>By: <a href=''>"+
                     json.author+ "</a> "+json.created +"</div></div>"+"<div class='comment-text'>"+ json.text+"</div>"+
-                    "<div class='action'><button type='button' class='btn btn-success btn-xs' title='Approved' id='upvote' onclick='upvotethis({{post.pk}},{{thread.pk}})' >"+
+                    "<div class='action'><button type='button' class='btn btn-success btn-xs' title='Approved' id='upvote' onclick='upvotethis("+json.postpk+","+json.thread_id+")' >"+
                     "<span class='glyphicon glyphicon-arrow-up' id='upvotecount"+json.postpk+"'></span></button>"+
-                                   "<button type='button' class='btn btn-danger btn-xs' title='Delete' onclick='downvotethis({{post.pk}},{{thread.pk}})'>"+
+                                   "<button type='button' class='btn btn-danger btn-xs' title='Delete' onclick='downvotethis("+json.postpk+","+json.thread_id+")'>"+
                                         "<span class='glyphicon glyphicon-arrow-down' id='downvotecount"+json.postpk+"'></span>"+
                                     "</button></div>");
                 
