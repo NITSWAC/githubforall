@@ -54,12 +54,14 @@
  			<h3 class="box-title">Team Members</h3>
  		</div>
  		<div class="box-body">
+      {% if members %}
    			<table class="table table-bordered">
                     <tr>
                       <th>     </th>
                       <th>Name</th>
                       <th>Date added</th>
                     </tr>
+                    
                     {% for member in members%}
                     <tr>
                     <th><div class="pull-left image"><img class="img-circle" src="/media/{{member.person.picture}}" alt="" style="width: 45px; height: 45px "></div></th> 
@@ -67,11 +69,46 @@
                     <th> {{member.date_joined}}</th>
                    </tr>
                    {% endfor %}
+                  {% else %}
+                  No members added yet!
+                  {% endif %}
+
                 </table>
  		</div>
  		</div>
  			
  		</div>
+
+
+    <div class="col-md-4">
+      <div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title">Unconfirmed Members</h3>
+        </div>
+        <div class="box-body">
+          {% if unconmem %}
+            <table class="table table-bordered">
+              <tr>
+                <th></th>
+                <th>Member</th>
+                <th>Accept</th>
+                <th>Reject</th>
+              </tr>
+              {% for m in unconmem %}
+                <tr>
+                  <th><div class="pull-left"><img class="img-circle" src="/media/{{m.person.picture}}" alt="" style="width: 45px; height: 45px "></div></th> 
+                  <th><a href="/{{ m.person.pk}}/profile">{{m.person.user.first_name}}</a></th>
+                  <th><a href="/{{m.person.pk}}-{{m.project.pk}}/accept" class="btn btn-flat btn-success"><i class="fa fa-check"></i></a></th>
+                  <th><a href="/{{m.person.pk}}-{{m.project.pk}}/accept" class="btn btn-flat btn-danger"><i class="fa fa-times"></i></a></th>
+                </tr>
+              {% endfor %}
+              
+            </table>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
  	</div>
  	{% if flag == 1 %}
           <div class="row">

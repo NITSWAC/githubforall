@@ -129,6 +129,7 @@
           <th><a href="/{{ m.mempk}}/profile">{{m.memname}}</th>
           <th>{{m.project.name}}</th>
           <th><a href="/{{m.mempk}}-{{m.project.pk}}/accept" class="btn btn-flat btn-success"><i class="fa fa-check"></i></a></th>
+          {# <th><button class="btn btn-flat btn-success" onclick="accept_member({{m.pk}},{{m.project.pk}})"><i class="fa fa-check"></button></th> #}
           <th><a href="/{{m.mempk}}-{{m.project.pk}}/reject" class="btn btn-flat btn-danger"><i class="fa fa-times"></i></a></th>
           {% endfor %}
           {% else %}

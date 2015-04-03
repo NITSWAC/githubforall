@@ -8,6 +8,7 @@ from django.contrib import messages
 from dashboard.models import Project,Task,Membership,Commit,Thread,Post
 from authentication.models import UserProfile
 from django.core.exceptions import ObjectDoesNotExist
+import json
 
 # Create your views here.
 
@@ -118,13 +119,16 @@ def viewproject(request,projectid):
 	except ObjectDoesNotExist as e:
 		print "Not found"
 		flag2=0
-	project_members= Membership.objects.filter(project=project)
+
+	project_members= Membership.objects.filter(project=project, confirmed=True)
+	unconfirmed_members=Membership.objects.filter(project=project, confirmed=False)
+
 	print project.admin
 	print request.user.username	
 	pic_path= str(project.project_img)
 	pic_path2=str(request.user.userprofile.picture)
 	tasks=Task.objects.filter(project=project)
-	context={'userp':member,'members':project_members, 'profile_pic': "/media/"+pic_path2,'profile_pic2': "/media/"+pic_path,'project':project,'tasks':tasks, 'flag':flag,'flag2':flag2,'role':role}
+	context={'unconmem':unconfirmed_members,'userp':member,'members':project_members, 'profile_pic': "/media/"+pic_path2,'profile_pic2': "/media/"+pic_path,'project':project,'tasks':tasks, 'flag':flag,'flag2':flag2,'role':role}
 	return render(request,'site/viewproject.html',context)
 
 
@@ -258,22 +262,48 @@ def thread(request,thread_id):
 	thread=Thread.objects.get(pk=thread_id)
 	posts=Post.objects.filter(thread=thread)
 	
-	if request.method =='POST':
-		post_form=PostForm(data=request.POST)
-		if post_form.is_valid():
-			post=post_form.save(commit=False)
-			post.posted_by=userp
-			post.thread=thread
-			post.save()
-			# return HttpResponseRedirect('/th/'+str(thread_id))
-		else:
-			messages.error(request,str(post_form.errors))
+	# if request.method =='POST':
+	# 	post_form=PostForm(data=request.POST)
+	# 	if post_form.is_valid():
+	# 		post=post_form.save(commit=False)
+	# 		post.posted_by=userp
+	# 		post.thread=thread
+	# 		post.save()
+	# 		# return HttpResponseRedirect('/th/'+str(thread_id))
+	# 	else:
+	# 		messages.error(request,str(post_form.errors))
 	post_form=PostForm()
 	context={'thread':thread, 'posts':posts,'post_form':post_form}
 	load_defaults(request,context)
 	return render(request, 'site/thread.html', context)
 
+def create_post(request,thread_id):
+    if request.method == 'POST':
+    	print 'in view'
+        post_text = request.POST.get('the_post')
+        print post_text
+        # post_text= request.POST['the_post']
+        thread=Thread.objects.get(pk=thread_id)
+        response_data = {}
+        userp= UserProfile.objects.get(user=request.user)
+        post = Post(msg=post_text, posted_by=userp, thread=thread)
+        post.save()
+        response_data['result'] = 'Create post successful!'
+        response_data['postpk'] = post.pk
+        response_data['text'] = post.msg
+        response_data['created'] = post.posted_at.strftime('%B %d, %Y %I:%M %p')
+        response_data['author'] = post.posted_by.user.first_name
+        response_data['pic_path']= "/media/"+str(post.posted_by.user.userprofile.picture)
 
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type="application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isn't happening"}),
+            content_type="application/json"
+        )
 def upvote(request,post_id,thread_id):
 	post=Post.objects.get(pk=post_id)
 	if request.user.is_authenticated():

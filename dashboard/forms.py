@@ -29,3 +29,4 @@ class PostForm(forms.ModelForm):
 		model=Post
 		exclude=('thread','posted_at','posted_at')
 		fields=('msg',)
+	
