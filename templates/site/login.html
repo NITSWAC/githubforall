@@ -14,8 +14,7 @@
     <!-- iCheck -->
     <link href='{% static "plugins/iCheck/square/blue.css" %}' rel="stylesheet" type="text/css" />
   </head>
-  <body class="login-page">
-  <div class="container">
+  <body class="login-page" style="background: url({% static 'img/login.jpg' %})">
   {%if messages %}{% for message in messages %}
         <div class="container-fluid">
             <div class="alert alert-{{message.tags}} fade in" style="text-align:center;">
@@ -26,7 +25,7 @@
   </div>
     <div class="login-box">
       <div class="login-logo">
-        <a href="../../index2.html"><b>GITHUB</b> for all</a>
+        <a href="#" style="color: #ffffff;" ><b>GITHUB</b> for all</a>
       </div><!-- /.login-logo -->
       <div class="login-box-body">
         <p class="login-box-msg">Sign in to start your session</p>

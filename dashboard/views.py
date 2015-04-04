@@ -43,9 +43,10 @@ def dashboard(request):
 		for t in threads_started:
 			k=len(Post.objects.filter(thread=t))
 			m[t]=k
-
-
-		context={'unconmem':l,'projects':project2,'threads_started':threads_started,'myposts': m}
+		print "No of commits: "
+		countofcommits=len(Commit.objects.filter(user=request.user.username))
+		print countofcommits
+		context={'unconmem':l,'projects':project2,'threads_started':threads_started,'myposts': m, 'commitcount': countofcommits }
 		load_defaults(request,context)
 		return render(request,'site/dashboard.html',context)
 
