@@ -6,7 +6,7 @@
  <div class="col-md-3"><a href="#" class="thumbnail"><img class="" src={{profile_pic2}} class="img-responsive" style="width: 40%; height: 100px; "></a></div>
  <div class="col-md-6"><h1>{{project.name}}</h1><h4>Managed by {{project.admin}}</h4></div>
  {% if flag == 1 %}
-
+  <div class="col-md-3"><a href="/{{project.pk}}/viewprojectstats" class="btn btn-success btn-block">View Stats</a></div>
  {% elif flag2 == 0 %}
 <div class="col-md-3"><a href="/{{project.pk}}/applytoproject" class="btn btn-success btn-block">Apply to Project</a></div>
 {% elif flag2 == 1 %}

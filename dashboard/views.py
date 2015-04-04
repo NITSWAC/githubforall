@@ -351,3 +351,40 @@ def downvote2(request):
 			downvotes=post.downvotes
 			post.save()
 	return HttpResponse(downvotes)
+
+
+def getcommitdata(request,projectid):
+	o=Commit.objects.filter(project=projectid)
+	print o
+	user={}
+	for l in o:
+		if l.user in user:
+			user[l.user].append(l)
+		else:
+			user[l.user]=[l]
+	print user
+	print "Filtered objects"
+	d={}
+	for l in o:
+		if l.commit_date.strftime('%m/%d/%Y') in d:
+			d[l.commit_date.strftime('%m/%d/%Y')]=d[l.commit_date.strftime('%m/%d/%Y')]+1
+		else:
+			d[l.commit_date.strftime('%m/%d/%Y')]=1
+	print d
+	user2={}
+	for u,l in user.items():
+		utemp=UserProfile.objects.get(user__username=u)
+		print "Fetched user details"
+		print utemp
+		user2[utemp]={}
+		for com in l:
+			if com.commit_date.strftime('%m/%d/%Y') in user2[utemp]:
+				user2[utemp][com.commit_date.strftime('%m/%d/%Y')]=user2[utemp][com.commit_date.strftime('%m/%d/%Y')]+1
+			else:
+				user2[utemp][com.commit_date.strftime('%m/%d/%Y')]=1
+		print "First userdetails complete"
+		print utemp
+		print user2[utemp]
+	context={'d':d,'mem_com': user2}
+	load_defaults(request,context)
+	return render(request, 'site/chart.html',context)
