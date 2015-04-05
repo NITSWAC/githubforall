@@ -30,6 +30,8 @@ def dashboard(request):
 		return HttpResponseRedirect('/login')
 	else:
 		l=[]
+		project2=Project.objects.filter(admin=request.user.username)
+		project3=Membership.objects.filter(person__user__username=request.user.username)
 		if len(project2)>0:
 			for projects in project2:
 				unconf_members=projects.members.all()

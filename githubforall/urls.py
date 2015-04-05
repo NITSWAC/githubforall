@@ -33,6 +33,7 @@ urlpatterns = patterns('',
     url(r'^(?P<user_id>\d+)/alltasks/$', 'dashboard.views.alltasks'),
     url(r'^th/upvote/$', 'dashboard.views.upvote2'),
     url(r'^th/downvote/$', 'dashboard.views.downvote2'),
+    url(r'^myprojects/$','dashboard.views.myprojects')
 
 
 
