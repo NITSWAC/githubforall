@@ -7,9 +7,11 @@
  <div class="col-md-6"><h1>{{project.name}}</h1><h4>Managed by {{project.admin}}</h4></div>
  {% if flag == 1 %}
   <div class="col-md-3"><a href="/{{project.pk}}/viewprojectstats" class="btn btn-success btn-block">View Stats</a></div>
- {% elif flag2 == 0 %}
+ {% elif showapply == False %}
+ <div class="col-md-3"><a href="#" class="btn btn-danger btn-block">Max Members reached</a></div>
+ {% elif showapply == True and flag2 == 0 %}
 <div class="col-md-3"><a href="/{{project.pk}}/applytoproject" class="btn btn-success btn-block">Apply to Project</a></div>
-{% elif flag2 == 1 %}
+{% elif flag2 == 1 and showapply == True %}
 <div class="col-md-3"><a href="#" class="btn btn-warning btn-block">Awaiting Confirmation</a></div>
 {% endif %}
 
@@ -79,7 +81,7 @@
  			
  		</div>
 
-
+{% if role == 'admin' %}
     <div class="col-md-4">
       <div class="box">
         <div class="box-header with-border">
@@ -109,6 +111,7 @@
 
       </div>
     </div>
+  {% endif %}
  	</div>
  	{% if flag == 1 %}
           <div class="row">

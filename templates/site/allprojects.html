@@ -1,0 +1,44 @@
+{% extends "layout/header.html" %}
+
+{%block content %}
+
+<div class="row">
+            <div class="col-xs-12">
+              <div class="box">
+                <div class="box-header">
+                  <h3 class="box-title">Your Projects</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                <div class="table-responsive">
+                  <table id="example2" class="table table-mailbox">
+
+  {% if projects %}
+  {% for p in projects %}
+                      <tr>
+                        <td class="small-col"><img src="{{ MEDIA_URL}}{{p.project_img}}" class="img-circle" style="width: 10%; height: 10%"></td>
+                         <td class="subject"><a href="/{{p.pk}}/viewproject/">{{ p }}</a></td>
+                        <td class="small-col">{{ p.createdate}}</td>
+                      
+                      </tr>
+                      
+     {% endfor %}
+    {% else %}
+     <thead>
+      <tr>
+        <th>
+          No Current Projects
+        </th>
+      </tr>
+     </thead>
+     {% endif %}
+   </table>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+
+
+
+{% endblock %}

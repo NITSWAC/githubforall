@@ -53,9 +53,7 @@ class Thread(models.Model):
 	def __str__(self):
 		return self.heading
 
-
-
-
+#post model
 class Post(models.Model):
 	thread = models.ForeignKey(Thread)
 	posted_by = models.ForeignKey(UserProfile)
@@ -66,6 +64,7 @@ class Post(models.Model):
 	def __str__(self):
 		return self.posted_by.user.first_name + " " + self.msg[:50] +"..."
 
+#notification model
 class Notification(models.Model):
 	NOTIFICATION_CHOICES = (
     ('AT', 'Added Task'),

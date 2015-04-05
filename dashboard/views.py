@@ -17,7 +17,12 @@ def load_defaults(request, context):
 	tasks=Task.objects.filter(member=request.user)
 	userp=UserProfile.objects.get(user=request.user)
 	notifications = Notification.objects.filter(member=userp).order_by('-created_at')
-	context.update({'notifications':notifications,'profile_pic': "/media/"+pic_path,'tasks':tasks,'userp':userp})
+	project2=Project.objects.filter(admin=request.user.username)
+	projectcount=len(project2)
+	project3=Membership.objects.filter(person__user__username=request.user.username)
+	print project3
+	projectcount+=len(project3)
+	context.update({'notifications':notifications,'profile_pic': "/media/"+pic_path,'tasks':tasks,'userp':userp,'projectcount':projectcount})
 
 def dashboard(request):
 	# print request.user, request.user.is_active, request.user.is_authenticated()
@@ -25,7 +30,6 @@ def dashboard(request):
 		return HttpResponseRedirect('/login')
 	else:
 		l=[]
-		project2=Project.objects.filter(admin=request.user.username)
 		if len(project2)>0:
 			for projects in project2:
 				unconf_members=projects.members.all()
@@ -47,12 +51,22 @@ def dashboard(request):
 		print "No of commits: "
 		countofcommits=len(Commit.objects.filter(user=request.user.username))
 		print countofcommits
-		context={'unconmem':l,'projects':project2,'threads_started':threads_started,'myposts': m, 'commitcount': countofcommits }
+		context={'unconmem':l,'projects':project2,'threads_started':threads_started,'myposts': m, 'commitcount': countofcommits, 'contribproj':project3 }
 		load_defaults(request,context)
 		context['page_title']='Home'
 		return render(request,'site/dashboard.html',context)
 
+def myprojects(request):
+	if not request.user.is_authenticated():
+		return HttpResponseRedirect('/login')
+	else:
+		project2=Project.objects.filter(admin=request.user.username)
+		project3=Membership.objects.filter(person__user__username=request.user.username)
+		context={'projects': project2, 'contribproj': project3}
+		load_defaults(request,context)
+		return render(request,'site/allprojects.html',context)
 
+# add a project 
 def addproject(request):
 	if request.method == "POST":
 		project_form=ProjectForm(data=request.POST)
@@ -75,19 +89,13 @@ def addproject(request):
 	context['page_title']='Add a Project'
 	return render(request,'site/addproject.html',context)
 
-
+#add a task
 
 def addtask(request,project_id):
 	project=Project.objects.get(pk=project_id)
 	if request.method == "POST":
 		task_form=TaskForm(data=request.POST)
 		member_to_add=request.POST['member']
-		commit=Commit()
-		commit.project=project_id
-		commit.user=request.user.username
-		commit.commit_prog=0
-		commit.commit_msg="Added new Task"
-		commit.save()
 		print 'printing member', member_to_add
 		member=UserProfile.objects.get(id=member_to_add)
 		task=task_form.save(commit=False)
@@ -108,10 +116,18 @@ def addtask(request,project_id):
 		context['page_title']='Add a Task'
 		return render(request,'site/addtask.html',context)
 
+#viewaproject
+
 def viewproject(request,projectid):
 	project=Project.objects.get(pk=projectid)
 	member=UserProfile.objects.get(user=request.user)
-
+	project_members= Membership.objects.filter(project=project, confirmed=True)
+	no_of_members=len(project_members)
+	showapply=True
+	if project.max_members == no_of_members:
+		showapply=False
+	else:
+		showapply=True
 	flag2=0
 	flag=0
 	role=""
@@ -137,23 +153,28 @@ def viewproject(request,projectid):
 	pic_path= str(project.project_img)
 	pic_path2=str(request.user.userprofile.picture)
 	all_tasks=Task.objects.filter(project=project)
-	context={'unconmem':unconfirmed_members,'userp':member,'members':project_members, 'profile_pic': "/media/"+pic_path2,'profile_pic2': "/media/"+pic_path,'project':project,'all_tasks':all_tasks, 'flag':flag,'flag2':flag2,'role':role}
+	context={'unconmem':unconfirmed_members,'userp':member,'members':project_members, 'profile_pic': "/media/"+pic_path2,'profile_pic2': "/media/"+pic_path,'project':project,'all_tasks':all_tasks, 'flag':flag,'flag2':flag2,'role':role, 'showapply': showapply}
 	load_defaults(request,context)
 	context['page_title']=project.name
 	return render(request,'site/viewproject.html',context)
 
 
+#apply to a project
+
 def applytoproject(request,project_id):
 	user=UserProfile.objects.get(user=request.user)
 	project= Project.objects.get(pk=project_id)
-	membership=Membership.objects.create(person=user, project=project)
-	membership.save()
-	project_admin = UserProfile.objects.get(user__email= project.admin)
-	noti = Notification(member = project_admin, msg_type='Applied', msg=''+user.user.first_name+' has applied for the project '+project.name, link='/'+str(project.id)+'/viewproject')
-	noti.save()
+	project_members= Membership.objects.filter(project=project, confirmed=True)
+	no_of_members=len(project_members)
+	if no_of_members < project.max_members:
+		membership=Membership.objects.create(person=user, project=project)
+		membership.save()
+		project_admin = UserProfile.objects.get(user__email= project.admin)
+		noti = Notification(member = project_admin, msg_type='Applied', msg=''+user.user.first_name+' has applied for the project '+project.name, link='/'+str(project.id)+'/viewproject')
+		noti.save()
 	return HttpResponseRedirect("/"+str(project_id)+"/viewproject")
 
-
+#search for a project or a user
 def search(request):
 	searchterm=request.GET['q'];
 	projects=Project.objects.filter(name__startswith=searchterm)
@@ -164,6 +185,7 @@ def search(request):
 	load_defaults(request,context)
 	return render(request,"site/search.html",context)
 
+#View profile of a user
 def profile(request,user_id):
 	user1=UserProfile.objects.get(pk=user_id)
 	adminproject=Project.objects.filter(admin=user1.user.username)
@@ -179,6 +201,7 @@ def profile(request,user_id):
 	context['page_title']= user1.user.first_name
 	return render(request,"site/profile.html",context)
 
+#Accept project membership request
 def accept(request,user_id,project_id):
 	if request.user.username == Project.objects.get(pk=project_id).admin:
 		print "Admin"
@@ -187,12 +210,14 @@ def accept(request,user_id,project_id):
 		mem=Membership.objects.get(person=user,project=project2)
 		mem.confirmed=True
 		mem.save()
-		noti = Notification(member = mem, msg_type='AP', msg=''+request.user.first_name+' has accepted your project request for '+project2.name, link='/'+str(project2.id)+'/viewproject')
+		noti = Notification(member = user, msg_type='AP', msg=''+request.user.first_name+' has accepted your project request for '+project2.name, link='/'+str(project2.id)+'/viewproject')
 		noti.save()
 		return HttpResponseRedirect('/dashboard')
 	else:
 		return HttpResponseRedirect('/logout')
 
+
+#Reject a project membership request
 def reject(request,user_id,project_id):
 	if request.user.username == Project.objects.get(pk=project_id).admin:
 		print "Admin"
@@ -200,11 +225,13 @@ def reject(request,user_id,project_id):
 		user=UserProfile.objects.get(pk=user_id)
 		mem=Membership.objects.get(person=user,project=project2)
 		mem.delete()
-		noti = Notification(member = mem, msg_type='AP', msg=''+request.user.first_name+' has rejected your project request for '+project2.name, link='/'+str(project2.id)+'/viewproject')
+		noti = Notification(member = user, msg_type='AP', msg=''+request.user.first_name+' has rejected your project request for '+project2.name, link='/'+str(project2.id)+'/viewproject')
 		noti.save()
 		return HttpResponseRedirect('/dashboard')
 	else:
 		return HttpResponseRedirect('/logout')
+
+#Add task to a project(Only project admin)
 
 def tasks(request,user_id,project_id):
 	userp=UserProfile.objects.get(pk=user_id)
@@ -234,7 +261,7 @@ def tasks(request,user_id,project_id):
 	context['page_title']='My Tasks'
 	return render(request, 'site/tasks.html',context)
 
-
+#Update Task from the user
 def updatetask(request, task_id,project_id):
 	task=Task.objects.get(pk=task_id)
 	members=task.member.all()
@@ -261,10 +288,10 @@ def updatetask(request, task_id,project_id):
 		project_admin = UserProfile.objects.get(user__email= project.admin)
 		noti = Notification(member = project_admin, msg_type='UT', msg=''+person.user.first_name+' has updated a task in '+project.name, link='/'+str(project.id)+'/viewproject')
 		noti.save()
-
-
 	return HttpResponseRedirect('/'+str(person.pk)+'-'+project_id+'/tasks')
 
+
+#Add a new idea or thread
 def newthread(request):
 	userp= UserProfile.objects.get(user=request.user)
 	if request.method =='POST':
@@ -285,6 +312,8 @@ def newthread(request):
 	context['page_title']='Create a new Thread'
 	return render(request, 'site/newthread.html',context)	
 
+
+# view the thread
 def thread(request,thread_id):
 	userp= UserProfile.objects.get(user=request.user)
 	thread=Thread.objects.get(pk=thread_id)
@@ -306,6 +335,8 @@ def thread(request,thread_id):
 	context['page_title']=thread.heading
 	return render(request, 'site/thread.html', context)
 
+
+#Add a post 
 def create_post(request,thread_id):
     if request.method == 'POST':
     	print 'in view'
@@ -337,6 +368,8 @@ def create_post(request,thread_id):
             json.dumps({"nothing to see": "this isn't happening"}),
             content_type="application/json"
         )
+
+#Upvote a post
 def upvote(request,post_id,thread_id):
 	post=Post.objects.get(pk=post_id)
 	if request.user.is_authenticated():
@@ -344,6 +377,8 @@ def upvote(request,post_id,thread_id):
 		post.save()
 	return HttpResponseRedirect('/th/'+str(thread_id))
 
+
+#Upvote a post
 def downvote(request,post_id,thread_id):
 	post=Post.objects.get(pk=post_id)
 	if request.user.is_authenticated():
@@ -351,6 +386,8 @@ def downvote(request,post_id,thread_id):
 		post.save()
 	return HttpResponseRedirect('/th/'+str(thread_id))
 
+
+#Show all the tasks
 def alltasks(request,user_id):
 	userp=UserProfile.objects.get(pk=user_id)
 	if request.user.username != userp.user.username:
@@ -361,6 +398,8 @@ def alltasks(request,user_id):
 	context['page_title']='Project Tasks'
 	return render(request, 'site/alltasks.html',context)
 
+
+#Upvote calc function
 def upvote2(request):
 	upvotes=0
 	if request.method == 'GET':
@@ -378,6 +417,8 @@ def upvote2(request):
 		noti.save()
 	return HttpResponse(upvotes)
 
+
+#Downvote calc function
 def downvote2(request):
 	downvotes=0
 	if request.method == 'GET':
@@ -396,6 +437,7 @@ def downvote2(request):
 	return HttpResponse(downvotes)
 
 
+#Get all commits
 def getcommitdata(request,projectid):
 	o=Commit.objects.filter(project=projectid)
 	project= Project.objects.get(id=projectid)

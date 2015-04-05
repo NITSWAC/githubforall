@@ -351,38 +351,32 @@ input[type=range]:focus::-ms-fill-upper {
             <li class="header">MAIN NAVIGATION</li>
             <li>
               <a href="/{{userp.id}}/profile">
-                <i class="fa fa-calendar"></i> <span>Profile</span>
+                <i class="fa fa-user"></i> <span>Profile</span>
                 <small class="label pull-right bg-red"></small>
               </a>
             </li>
             <li>
               <a href="/newthread">
-                <i class="fa fa-calendar"></i> <span>Start a new Thread</span>
+                <i class="fa fa-lightbulb-o"></i> <span>Start a new Thread</span>
                 <small class="label pull-right bg-red"></small>
               </a>
             </li>
-            <li class="treeview">
-              <a href="#">
-                <i class="fa fa-pie-chart"></i>
-                <span>Charts</span>
-                <i class="fa fa-angle-left pull-right"></i>
-              </a>
-              <ul class="treeview-menu">
-                <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> Morris</a></li>
-                <li><a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> Flot</a></li>
-                <li><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> Inline charts</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="pages/calendar.html">
-                <i class="fa fa-calendar"></i> <span>Calendar</span>
-                <small class="label pull-right bg-red">3</small>
+             <li>
+              <a href="/addproject">
+                <i class="fa fa-plus-square"></i> <span>Add a Project</span>
+                <small class="label pull-right bg-red"></small>
               </a>
             </li>
             <li>
-              <a href="pages/mailbox/mailbox.html">
-                <i class="fa fa-envelope"></i> <span>Mailbox</span>
-                <small class="label pull-right bg-yellow">12</small>
+              <a href="/advancedsearch">
+                <i class="fa fa-search"></i> <span>Advanced search</span>
+                <small class="label pull-right bg-red"></small>
+              </a>
+            </li>
+            <li>
+              <a href="/myprojects">
+                <i class="fa fa-paper-plane-o"></i> <span>My Projects</span>
+                <small class="label pull-right bg-red">{{projectcount}}</small>
               </a>
             </li>
             
