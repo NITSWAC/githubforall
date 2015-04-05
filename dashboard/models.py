@@ -64,5 +64,25 @@ class Post(models.Model):
 	upvotes=models.IntegerField(default=0)
 	downvotes=models.IntegerField(default=0)
 	def __str__(self):
-		return self.posted_by.user.first_name
+		return self.posted_by.user.first_name + " " + self.msg[:50] +"..."
+
+class Notification(models.Model):
+	NOTIFICATION_CHOICES = (
+    ('AT', 'Added Task'),
+    ('UT', 'Updated Task'),
+    ('AP', 'Accepted Project'),
+    ('RP', 'Rejected Project'),
+    ('Applied', 'Applied to your Project'),
+    ('UP', 'upvoted your comment'),
+    ('DW', 'Downvoted your comment'),
+    ('PO', 'Someone posted on your thread'),
+	)	
+	member=models.ForeignKey(UserProfile)
+	msg_type = models.CharField(max_length=2, choices=NOTIFICATION_CHOICES)
+	msg = models.CharField(max_length=50)
+	clicked = models.BooleanField(default = False)
+	link = models.URLField()
+	created_at = models.DateTimeField(auto_now=True)
+	def __str__(self):
+		return self.member.user.first_name + " " + self.msg[:50] +"..."
 

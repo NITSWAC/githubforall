@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>{{ page_title }}</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 3.3.2 -->
      <link href='{% static "bootstrap/css/bootstrap.min.css"  %}' rel="stylesheet" type="text/css" />
@@ -217,39 +217,27 @@ input[type=range]:focus::-ms-fill-upper {
               <li class="dropdown notifications-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
-                  <span class="label label-warning">10</span>
+                  <span class="label label-warning">{{notifications|length}}</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">You have 10 notifications</li>
+                  <li class="header">You have {{notifications|length}} notifications</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
+                    {% for not in notifications %}
                       <li>
-                        <a href="#">
-                          <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                        <a href="{{not.link}}">
+                          {% if not.msg_type == 'Applied' or not.msg_type == 'UP' or not.msg_type == 'DW' or not.msg_type == 'PO' %}
+                            <i class="fa fa-user text-aqua"></i> 
+                          {% else %}
+                            <i class="fa fa-users text-aqua"></i>
+                          {% endif %}
+                          {{not.msg}}
                         </a>
                       </li>
-                      <li>
-                        <a href="#">
-                          <i class="fa fa-warning text-yellow"></i> Very long description here that may not fit into the page and may cause design problems
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#">
-                          <i class="fa fa-users text-red"></i> 5 new members joined
-                        </a>
-                      </li>
-
-                      <li>
-                        <a href="#">
-                          <i class="fa fa-shopping-cart text-green"></i> 25 sales made
-                        </a>
-                      </li>
-                      <li>
-                        <a href="#">
-                          <i class="fa fa-user text-red"></i> You changed your username
-                        </a>
-                      </li>
+                    {% endfor %}
+                      
+                      
                     </ul>
                   </li>
                   <li class="footer"><a href="#">View all</a></li>
@@ -446,7 +434,7 @@ input[type=range]:focus::-ms-fill-upper {
     <script src='{% static "plugins/slimScroll/jquery.slimscroll.min.js" %}' type="text/javascript"></script>
     <!-- ChartJS 1.0.1 -->
     <script src='{% static "plugins/chartjs/Chart.min.js" %}' type="text/javascript"></script>
-    <script src='{% static "js/updownajax.js" %}' type="text/javascript"></script>
+    
     
 
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
