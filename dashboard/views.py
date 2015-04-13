@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.sessions.models import Session
 from django.contrib import messages
-from dashboard.models import Project,Task,Membership,Commit,Thread,Post,Notification
+from dashboard.models import Project,Task,Membership,Commit,Thread,Post,Notification,Vote
 from authentication.models import UserProfile
 from django.core.exceptions import ObjectDoesNotExist
 import json
@@ -320,6 +320,20 @@ def thread(request,thread_id):
 	userp= UserProfile.objects.get(user=request.user)
 	thread=Thread.objects.get(pk=thread_id)
 	posts=Post.objects.filter(thread=thread)
+	upvotes=[]
+	downvotes=[]
+	votes=Vote.objects.filter(user=userp)
+	for v in votes:
+		print v
+		print v.upordown
+		if v.upordown == 1:
+			upvotes.append(v.post.pk)
+		else:
+			downvotes.append(v.post.pk)
+	print "Upvotes"
+	print upvotes
+	print "Downvotes" 
+	print downvotes
 	
 	# if request.method =='POST':
 	# 	post_form=PostForm(data=request.POST)
@@ -332,7 +346,7 @@ def thread(request,thread_id):
 	# 	else:
 	# 		messages.error(request,str(post_form.errors))
 	post_form=PostForm()
-	context={'thread':thread, 'posts':posts,'post_form':post_form}
+	context={'thread':thread, 'posts':posts,'post_form':post_form, 'upvotes':upvotes, 'downvotes': downvotes}
 	load_defaults(request,context)
 	context['page_title']=thread.heading
 	return render(request, 'site/thread.html', context)
@@ -409,9 +423,17 @@ def upvote2(request):
 		thread_id=request.GET['thread_id']
 		post=Post.objects.get(pk=post_id)
 		if request.user.is_authenticated():
-			post.upvotes=post.upvotes+1
-			upvotes=post.upvotes
-			post.save()
+			if Vote.objects.filter(post=post,upordown=1,user=UserProfile.objects.get(user=request.user)).count() == 0:
+				post.upvotes=post.upvotes+1
+				upvotes=post.upvotes
+				post.save()
+				v=Vote()
+				v.user=UserProfile.objects.get(user=request.user)
+				v.post=post
+				v.upordown=1;
+				v.save()
+			else:
+				upvotes=post.upvotes
 		thread=Thread.objects.get(id = thread_id)
 		post=Post.objects.get(id=post_id)
 		userp= UserProfile.objects.get(user=request.user)
@@ -428,9 +450,17 @@ def downvote2(request):
 		thread_id=request.GET['thread_id']
 		post=Post.objects.get(pk=post_id)
 		if request.user.is_authenticated():
-			post.downvotes=post.downvotes+1
-			downvotes=post.downvotes
-			post.save()
+			if Vote.objects.filter(post=post,upordown=0,user=UserProfile.objects.get(user=request.user)).count() == 0:
+				post.downvotes=post.downvotes+1
+				downvotes=post.downvotes
+				post.save()
+				v=Vote()
+				v.user=UserProfile.objects.get(user=request.user)
+				v.post=post
+				v.upordown=0;
+				v.save()
+			else:
+				downvotes=post.downvotes
 		thread=Thread.objects.get(id = thread_id)
 		post=Post.objects.get(id=post_id)
 		userp= UserProfile.objects.get(user=request.user)	

@@ -64,6 +64,14 @@ class Post(models.Model):
 	def __str__(self):
 		return self.posted_by.user.first_name + " " + self.msg[:50] +"..."
 
+
+class Vote(models.Model):
+	post=models.ForeignKey(Post)
+	upordown=models.IntegerField()
+	user=models.ForeignKey(UserProfile)
+	def __str__(self):
+		return str(self.post.pk)+" "+str(self.user.pk)
+
 #notification model
 class Notification(models.Model):
 	NOTIFICATION_CHOICES = (

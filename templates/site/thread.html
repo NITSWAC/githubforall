@@ -35,12 +35,25 @@
                                     {{ post.msg }}
                                 </div>
                                 <div class="action">
+                                {% if post.pk not in upvotes %}
                                     <button type="button" class="btn btn-success btn-xs" title="Approved" id="upvote" onclick="upvotethis({{post.pk}},{{thread.pk}})" >
                                         <span class="glyphicon glyphicon-arrow-up" id="upvotecount{{post.pk}}">{%if post.upvotes > 0 %} {{post.upvotes}}{% endif %}</span>
                                     </button>
+                                {% else %}
+                                 <button type="button" class="btn btn-success disabled btn-xs" title="Approved" id="upvote" onclick="" >
+                                        <span class="glyphicon glyphicon-arrow-up" id="upvotecount{{post.pk}}">{%if post.upvotes > 0 %} {{post.upvotes}}{% endif %}</span>
+                                    </button>
+
+                                {% endif %}
+                                {% if post.pk not in downvotes %}
                                     <button type="button" class="btn btn-danger btn-xs" title="Delete" onclick="downvotethis({{post.pk}},{{thread.pk}})">
                                         <span class="glyphicon glyphicon-arrow-down" id="downvotecount{{post.pk}}">{%if post.downvotes > 0 %} {{post.downvotes}} {% endif %}</span>
                                     </button>
+                                {% else %}
+                                <button type="button" class="btn btn-danger disabled btn-xs" title="Delete" onclick="">
+                                        <span class="glyphicon glyphicon-arrow-down" id="downvotecount{{post.pk}}">{%if post.downvotes > 0 %} {{post.downvotes}} {% endif %}</span>
+                                    </button>
+                                 {% endif %}
                                 </div>
                             </div>
                         </div>

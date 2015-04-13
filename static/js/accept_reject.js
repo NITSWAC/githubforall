@@ -8,6 +8,9 @@
 		$.get('/th/upvote',{project_id: projectid, user_id: userid}, function(data) {
 			data=" "+data;
 			$(upvotecount).html(data);
+			$(upvotecount).html(data);
+			$(upvotecount).addClass('disabled')
+			$(upvotecount).attr('onclick', '');
 			//send recieve update
 		});
 	}
@@ -19,7 +22,11 @@
 		upvotecount="#downvotecount"+postid;
 		$.get('/th/downvote',{post_id: postid, thread_id: threadid}, function(data) {
 			data=" "+data;
+			console.log(data)
 			$(upvotecount).html(data);
+			$(upvotecount).html(data);
+			$(upvotecount).addClass('disabled')
+			$(upvotecount).attr('onclick', '');
 		});
 	}
 	
